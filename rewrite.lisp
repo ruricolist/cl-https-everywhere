@@ -47,24 +47,28 @@ Returns three values:
 
 Three values are necessary to distinguish the case where the URI
 passed in was *already* an HTTPS URI."
-  (setf uri (coerce uri 'simple-string))
-  (flet ((rewrite-uri (uri)
-           (reduce (lambda (uri ruleset)
-                     (if (excluded? ruleset uri)
-                         uri
-                         (reduce (lambda (uri rule)
-                                   (apply-rule rule uri))
-                                 (ruleset.rules ruleset)
-                                 :initial-value uri)))
-                   (get-rulesets uri)
-                   :initial-value uri)))
-    (let ((scheme (uri-scheme uri)))
-      (if (equal scheme "https")
-          (values uri t nil)
-          (let ((uri2 (rewrite-uri uri)))
-            (if (equal uri uri2)
-                (values uri2 nil nil)
-                (values uri2 t t)))))))
+  (setf uri (coerce (trim-whitespace uri) 'simple-string))
+  (handler-case
+      (let ((scheme (uri-scheme uri)))
+        (if (equal scheme "https")
+            (values uri t nil)
+            (let ((uri2 (rewrite-uri-1 uri)))
+              (if (equal uri uri2)
+                  (values uri2 nil nil)
+                  (values uri2 t t)))))
+    (quri:uri-error ()
+      (values uri nil nil))))
+
+(defun rewrite-uri-1 (uri)
+  (reduce (lambda (uri ruleset)
+            (if (excluded? ruleset uri)
+                uri
+                (reduce (lambda (uri rule)
+                          (apply-rule rule uri))
+                        (ruleset.rules ruleset)
+                        :initial-value uri)))
+          (get-rulesets uri)
+          :initial-value uri))
 
 (defun uri-scheme (uri)
   (values (quri:parse-uri uri)))
