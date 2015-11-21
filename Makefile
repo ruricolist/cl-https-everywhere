@@ -13,7 +13,7 @@ rulesets.xml: | $(rules)
 	echo "</rulesets>" >> rulesets.xml
 
 clean:
-	rm -rf https-everywhere-master master.tar.gz
+	rm -rf https-everywhere/*
 
 maintainer-clean: clean
 	rm rulesets.xml
