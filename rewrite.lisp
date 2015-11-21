@@ -1,17 +1,5 @@
 (in-package #:cl-https-everywhere)
 
-(defvar *rulesets*
-  (assure hash-table
-    #.(progn
-        (format t "~&Compiling rulesets... ")
-        (lret ((dict (dict)))
-          (let ((file (asdf:system-relative-pathname :cl-https-everywhere "rulesets.xml")))
-            (dolist (ruleset (compile-rulesets-file file))
-              (unless (ruleset.disabled? ruleset)
-                (dolist (target (ruleset.targets ruleset))
-                  (let ((target (string-downcase target)))
-                    (push ruleset (gethash target dict)))))))))))
-
 (defun permute-host (host)
   "The (undocumented!) logic HTTPS Everywhere uses to match
 wildcards."

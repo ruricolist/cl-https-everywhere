@@ -16,5 +16,7 @@
                (:static-file "rulesets.xml")
                (:file "rulesets" :depends-on ("package"))
                (:file "compiler" :depends-on ("rulesets"))
-               (:file "rewrite" :depends-on ("compiler"))))
+               (:file "lang" :depends-on ("compiler"))
+               (:file "build" :depends-on ("lang"))
+               (:file "rewrite" :depends-on ("build"))))
 
