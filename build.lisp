@@ -12,7 +12,8 @@
                     :name :wild))
   (:depends-on '+rules-dir+)
   (unless (uiop:directory-exists-p +rules-dir+)
-    (:sh "git submodule update --init --depth=1"))
+    (:sh "git submodule update --init --depth=1")
+    (assert (uiop:directory-exists-p +rules-dir+)))
   (:depends-on +rules-dir+))
 
 (loom:file-target "rulesets.xml"
