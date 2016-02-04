@@ -11,7 +11,8 @@
                #:cxml
                #:uiop
                #:quri
-               #:cl-tld)
+               #:cl-tld
+               #:loom)
   :components ((:file "package")
                (:static-file "rulesets.xml")
                (:file "rulesets" :depends-on ("package"))
