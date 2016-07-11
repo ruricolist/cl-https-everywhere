@@ -8,6 +8,6 @@
           (let ((target (string-downcase target)))
             (push ruleset (gethash target dict))))))))
 
-(loom:deflang/expander rulesets-file (source)
+(loom:deflang/loader rulesets-file (source)
   (compile-rulesets source)
   :extension "xml")
