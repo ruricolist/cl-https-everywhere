@@ -16,15 +16,15 @@
     (assert (uiop:directory-exists-p +rules-dir+)))
   (:depends-on +rules-dir+))
 
-(loom:file-target "rulesets.xml"
-    (with-output-to-file (out loom:*target*
-                              :if-exists :rename-and-delete)
-      (:echo "Concatenating rulesets.xml.")
-      (format out "<rulesets>~%")
-      (dolist (file +ruleset-files+)
-        (with-input-from-file (in file)
-          (copy-stream in out)))
-      (format out "~%</rulesets>"))
+(loom:file-target rulesets "rulesets.xml" (temp)
+  (with-output-to-file (out temp :if-exists :rename-and-delete
+                                 :external-format :utf-8)
+    (:print "Concatenating rulesets.xml.")
+    (format out "<rulesets>~%")
+    (dolist (file +ruleset-files+)
+      (with-input-from-file (in file :external-format :utf-8)
+        (copy-stream in out)))
+    (format out "~%</rulesets>"))
   (:depends-on '+ruleset-files+)
   (dolist (file +ruleset-files+)
     (:depends-on file)))
