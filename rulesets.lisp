@@ -1,11 +1,5 @@
 (in-package #:cl-https-everywhere)
 
-(def ruleset-files
-  '#.(directory
-      (asdf:system-relative-pathname
-       :cl-https-everywhere
-       "rules/*.xml")))
-
 (deftype parsed-rule ()
   '(cons string (cons string null)))
 
