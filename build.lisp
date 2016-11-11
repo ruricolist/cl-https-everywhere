@@ -26,8 +26,7 @@
         (copy-stream in out)))
     (format out "~%</rulesets>"))
   (:depends-on '+ruleset-files+)
-  (dolist (file +ruleset-files+)
-    (:depends-on file)))
+  (:depends-on +ruleset-files+))
 
 (defparameter *rulesets*
   (loom:require-as 'rulesets-file "rulesets"))
