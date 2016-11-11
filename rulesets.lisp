@@ -1,7 +1,7 @@
 (in-package #:cl-https-everywhere)
 
 (deftype parsed-rule ()
-  '(cons string (cons string null)))
+  '(tuple string string))
 
 (deftype scanner ()
   '(or function null))
@@ -21,29 +21,28 @@
    (disabled :type boolean :initform nil :initarg :disabled
              :reader ruleset.disabled?)))
 
-(defmethod initialize-instance :after ((self ruleset) &key)
-  (with-slots (rules exclusions raw-rules raw-exclusions) self
+(defmethods ruleset
+    (self name targets raw-rules rules exclusions raw-exclusions disabled)
+  (:method initialize-instance :after (self &key)
     (setf rules (mapply #'compile-rule raw-rules)
-          exclusions (compile-exclusions raw-exclusions))))
+          exclusions (compile-exclusions raw-exclusions)))
 
-(defmethod make-load-form ((self ruleset) &optional env)
-  (declare (ignore env))
-  (with-slots (name targets raw-exclusions raw-rules disabled) self
+  (:method make-load-form (self &optional env)
+    (declare (ignore env))
     `(make 'ruleset
            :name ,name
            :targets ',targets
            :raw-rules ',raw-rules
            :raw-exclusions ',raw-exclusions
-           :disabled ,disabled)))
+           :disabled ,disabled))
 
-(defmethod print-object ((self ruleset) stream)
-  (print-unreadable-object (self stream :type t)
-    (format stream "~a" (ruleset.name self))
-    (when (ruleset.disabled? self)
-      (format stream " DISABLED"))))
+  (:method print-object (self stream)
+    (print-unreadable-object (self stream :type t)
+      (format stream "~a" name)
+      (when disabled
+        (format stream " DISABLED"))))
 
-(defmethod excluded? ((ruleset ruleset) (uri string))
-  (with-slots (exclusions) ruleset
+  (:method excluded? (self (uri string))
     (etypecase-of scanner exclusions
       (null nil)
       (function (ppcre:scan exclusions uri)))))
