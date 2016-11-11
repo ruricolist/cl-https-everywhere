@@ -1,29 +1,28 @@
 (in-package #:cl-https-everywhere)
 
-
-(defclass rulesets-compiler (sax:default-handler)
+(defclass rulesets-compiler (fxml.sax:default-handler)
   ((compiler :accessor compiler)
    (rulesets :initform nil :accessor rulesets)))
 
 (defmethods rulesets-compiler (self rulesets compiler)
-  (:method sax:end-document (self)
+  (:method fxml.sax:end-document (self)
     (nreverse rulesets))
-  (:method sax:start-element (self ns lname qname attrs)
+  (:method fxml.sax:start-element (self ns lname qname attrs)
     (string-case lname
       ("rulesets")
       ("ruleset"
        (let ((c (make 'ruleset-compiler)))
          (setf compiler c)
-         (sax:start-element c ns lname qname attrs)))
-      (t (sax:start-element compiler ns lname qname attrs))))
-  (:method sax:end-element (self ns lname qname)
+         (fxml.sax:start-element c ns lname qname attrs)))
+      (t (fxml.sax:start-element compiler ns lname qname attrs))))
+  (:method fxml.sax:end-element (self ns lname qname)
     (declare (ignore ns qname))
     (when (equal lname "ruleset")
-      (let ((ruleset (sax:end-document compiler)))
+      (let ((ruleset (fxml.sax:end-document compiler)))
         (push ruleset rulesets))
       (slot-makunbound self 'compiler))))
 
-(defclass ruleset-compiler (sax:default-handler)
+(defclass ruleset-compiler (fxml.sax:default-handler)
   ((name :type string)
    (targets :initform nil)
    (rules :initform nil)
@@ -42,14 +41,14 @@ bindings, iterating over the list of ATTRS only once."
          ;; Do the bindings.
          ,(with-gensyms (a)
             `(dolist (,a ,attrs)
-               (string-case (sax:attribute-local-name ,a)
+               (string-case (fxml.sax:attribute-local-name ,a)
                  ,@(loop for (sym name) in binds
-                         collect `(,name (setf ,sym (sax:attribute-value ,a)))))))
+                         collect `(,name (setf ,sym (fxml.sax:attribute-value ,a)))))))
          ,@body))))
 
 (defmethods ruleset-compiler
     (self name disabled targets rules exclusions)
-  (:method sax:end-document (self)
+  (:method fxml.sax:end-document (self)
     (unless rules
       (error "No rules"))
     (make 'ruleset
@@ -58,7 +57,7 @@ bindings, iterating over the list of ATTRS only once."
           :targets targets
           :raw-rules rules
           :raw-exclusions exclusions))
-  (:method sax:start-element (self ns lname qname attrs)
+  (:method fxml.sax:start-element (self ns lname qname attrs)
     (declare (ignore ns qname))
     (string-case lname
       ("ruleset"
@@ -77,10 +76,10 @@ bindings, iterating over the list of ATTRS only once."
          (push pattern exclusions))))))
 
 (defun compile-ruleset-file (file)
-  (cxml:parse (pathname file) (make-ruleset-compiler)))
+  (fxml:parse (pathname file) (make-ruleset-compiler)))
 
 (defun compile-rulesets-file (file)
-  (cxml:parse (pathname file) (make-rulesets-compiler)))
+  (fxml:parse (pathname file) (make-rulesets-compiler)))
 
 (defun make-ruleset-compiler ()
   (make 'ruleset-compiler))

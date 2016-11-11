@@ -8,7 +8,7 @@
   :depends-on (#:alexandria
                #:serapeum
                #:cl-ppcre
-               #:cxml
+               #:fxml
                #:uiop
                #:quri
                #:cl-tld
