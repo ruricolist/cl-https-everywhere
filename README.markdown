@@ -15,7 +15,7 @@ string, rewrites it if possible, and returns three values:
 Three values are necessary to distinguish the case where the URI
 passed in was *already* an HTTPS URI.
 
-    (https-everywhere:rewrite-uri "http://example.com/")
+    (rewrite-uri "http://example.com/")
     => "http://example.com/", NIL, NIL
 
     (rewrite-uri "http://www.eff.org/")
@@ -25,5 +25,3 @@ passed in was *already* an HTTPS URI.
     => "https://www.eff.org/", T, NIL
 
 [HTTPS Everywhere]: https://www.eff.org/HTTPS-everywhere
-
-    
