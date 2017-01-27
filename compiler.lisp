@@ -81,6 +81,10 @@ bindings, iterating over the list of ATTRS only once."
 (defun compile-rulesets-file (file)
   (fxml:parse (pathname file) (make-rulesets-compiler)))
 
+(defun compile-rulesets-stream (stream)
+  (check-type stream stream)
+  (fxml:parse stream (make-rulesets-compiler)))
+
 (defun make-ruleset-compiler ()
   (make 'ruleset-compiler))
 
