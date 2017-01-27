@@ -8,6 +8,6 @@
           (let ((target (string-downcase target)))
             (push ruleset (gethash target dict))))))))
 
-(loom:deflang/loader rulesets-file (source)
+(overlord:define-loader-language :cl-https-everywhere/rulesets-file (source)
   (compile-rulesets source)
   :extension "xml")

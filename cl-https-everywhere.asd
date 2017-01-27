@@ -12,7 +12,7 @@
                #:uiop
                #:quri
                #:cl-tld
-               #:loom)
+               #:overlord)
   :components ((:file "package")
                (:static-file "rulesets.xml")
                (:file "rulesets" :depends-on ("package"))
