@@ -3,7 +3,7 @@
 (defun compile-rulesets (file)
   (lret ((dict (dict)))
     (dolist (ruleset (compile-rulesets-file file))
-      (unless (ruleset.disabled? ruleset)
+      (unless (ruleset.disabled ruleset)
         (dolist (target (ruleset.targets ruleset))
           (let ((target (string-downcase target)))
             (push ruleset (gethash target dict))))))))

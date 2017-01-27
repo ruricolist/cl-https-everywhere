@@ -6,46 +6,38 @@
 (deftype scanner ()
   '(or function null))
 
-(defclass compiled-rule ()
-  ((from :initarg :from :type function :reader rule.from)
-   (to :initarg :to :type string :reader rule.to)))
+(defstruct-read-only (compiled-rule (:conc-name rule.))
+  (from :type function)
+  (to :type string))
 
-(defclass ruleset ()
-  ((name :type string :initarg :name
-         :reader ruleset.name)
-   (targets :type list :initarg :targets :reader ruleset.targets)
-   (raw-rules :type list :initarg :raw-rules :reader ruleset.raw-rules)
-   (rules :type list :initarg :rules :reader ruleset.rules)
-   (raw-exclusions :type list :initarg :raw-exclusions :reader ruleset.raw-exclusions)
-   (exclusions :type scanner :initarg :exclusions)
-   (disabled :type boolean :initform nil :initarg :disabled
-             :reader ruleset.disabled?)))
+(defstruct-read-only (ruleset
+                      (:conc-name ruleset.)
+                      (:constructor %make-ruleset))
+  ;; Why store the raw rules and raw exclusions? So we can save the load form to disk.
+  (name :type string)
+  (targets :type list)
+  (rules :type list)
+  (exclusions :type scanner)
+  (disabled nil :type boolean))
 
-(defmethods ruleset
-    (self name targets raw-rules rules exclusions raw-exclusions disabled)
-  (:method initialize-instance :after (self &key)
-    (setf rules (mapply #'compile-rule raw-rules)
-          exclusions (compile-exclusions raw-exclusions)))
+(defun make-ruleset (&key name targets rules exclusions disabled)
+  (%make-ruleset :name name
+                 :targets targets
+                 :disabled disabled
+                 :rules (mapply #'compile-rule rules)
+                 :exclusions (compile-exclusions exclusions)))
 
-  (:method make-load-form (self &optional env)
-    (declare (ignore env))
-    `(make 'ruleset
-           :name ,name
-           :targets ',targets
-           :raw-rules ',raw-rules
-           :raw-exclusions ',raw-exclusions
-           :disabled ,disabled))
+(defmethod print-object ((self ruleset) stream)
+  (print-unreadable-object (self stream :type t)
+    (format stream "~a" (ruleset.name self))
+    (when (ruleset.disabled self)
+      (format stream " DISABLED"))))
 
-  (:method print-object (self stream)
-    (print-unreadable-object (self stream :type t)
-      (format stream "~a" name)
-      (when disabled
-        (format stream " DISABLED"))))
-
-  (:method excluded? (self (uri string))
-    (etypecase-of scanner exclusions
-      (null nil)
-      (function (ppcre:scan exclusions uri)))))
+(defun excluded? (ruleset uri)
+  (declare (type string uri))
+  (etypecase-of scanner (ruleset.exclusions ruleset)
+    (null nil)
+    (function (ppcre:scan (ruleset.exclusions ruleset) uri))))
 
 (defun literal-target? (target)
   (and (stringp target) (not (find #\* target))))
@@ -65,7 +57,7 @@
 (defun compile-rule (from to)
   (let ((scanner (ppcre:create-scanner from))
         (to (ppcre:regex-replace-all "\\$(\\d+)" to "\\\\\\1"))) ;ouch
-    (make 'compiled-rule :from scanner :to to)))
+    (make-compiled-rule :from scanner :to to)))
 
 (defmethod apply-rule ((rule compiled-rule) string)
   (with-slots (from to) rule

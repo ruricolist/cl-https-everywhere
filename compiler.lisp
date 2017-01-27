@@ -51,12 +51,11 @@ bindings, iterating over the list of ATTRS only once."
   (:method fxml.sax:end-document (self)
     (unless rules
       (error "No rules"))
-    (make 'ruleset
-          :disabled disabled
-          :name name
-          :targets targets
-          :raw-rules rules
-          :raw-exclusions exclusions))
+    (make-ruleset :disabled disabled
+                  :name name
+                  :targets targets
+                  :rules rules
+                  :exclusions exclusions))
   (:method fxml.sax:start-element (self ns lname qname attrs)
     (declare (ignore ns qname))
     (string-case lname
