@@ -19,7 +19,6 @@
 (overlord:file-target rulesets "rulesets.xml" (temp)
   (with-output-to-file (out temp :if-exists :rename-and-delete
                                  :external-format :utf-8)
-    #+ () (:print "Concatenating rulesets.xml.")
     (format out "<rulesets>~%")
     (dolist (file +ruleset-files+)
       (with-input-from-file (in file :external-format :utf-8)
