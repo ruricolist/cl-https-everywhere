@@ -12,7 +12,8 @@
                #:uiop
                #:quri
                #:cl-tld
-               #:overlord)
+               #:overlord
+               #:overlord/http)
   :components ((:file "package")
                (:static-file "rulesets.xml")
                (:file "rulesets" :depends-on ("package"))
