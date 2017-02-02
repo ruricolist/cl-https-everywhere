@@ -68,8 +68,3 @@ passed in was *already* an HTTPS URI."
 (assert (equal '("https://www.eff.org/" t nil)
                (multiple-value-list
                 (rewrite-uri "https://www.eff.org/"))))
-
-(assert (equal '("https://www.eff.org/" t t)
-               (multiple-value-list
-                (rewrite-uri "http://www.eff.org/"))))
-
