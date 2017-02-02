@@ -27,7 +27,7 @@ passed in was *already* an HTTPS URI.
 
 At the moment the rulesets are fetched by shallow-cloning the HTTPS
 Everywhere repository. It is possible that at some point in the future
-there may be [a simpler API][]. If such an API does come along, it
+there may be [a simpler API][API]. If such an API does come along, it
 would make keeping the rulesets up-to-date much easier.
 
 [HTTPS Everywhere]: https://www.eff.org/HTTPS-everywhere
