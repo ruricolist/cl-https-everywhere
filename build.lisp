@@ -20,8 +20,8 @@
   (:depends-on '+https-everywhere-repo+))
 
 (overlord:defvar/deps *ruleset-files*
-    ;; uiop:directory-files is too slow
     (progn
+      ;; uiop:directory-files is too slow
       (overlord/http:online-only ()
         (with-feedback ("Updating rules..." "Rules updated.")
           (:run
