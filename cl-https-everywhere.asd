@@ -15,7 +15,6 @@
                #:overlord
                #:overlord/http)
   :components ((:file "package")
-               (:static-file "rulesets.xml")
                (:file "rulesets" :depends-on ("package"))
                (:file "compiler" :depends-on ("rulesets"))
                (:file "lang" :depends-on ("compiler"))
