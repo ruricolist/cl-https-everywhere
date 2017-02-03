@@ -13,7 +13,6 @@
 (defstruct-read-only (ruleset
                       (:conc-name ruleset.)
                       (:constructor %make-ruleset))
-  ;; Why store the raw rules and raw exclusions? So we can save the load form to disk.
   (name :type string)
   (targets :type list)
   (rules :type list)
