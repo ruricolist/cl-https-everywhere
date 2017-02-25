@@ -12,24 +12,21 @@
   "https://github.com/EFForg/https-everywhere.git")
 
 (overlord:directory-target https-everywhere "https-everywhere/"
-  (progn
-    (when (uiop:directory-exists-p https-everywhere)
-      (uiop:delete-directory-tree https-everywhere :validate t))
-    (with-feedback ("Fetching rules..." "Fetched rules")
-      (:run `("git" "clone" "--depth=1" ,+https-everywhere-repo+))))
+  (if (uiop:directory-exists-p https-everywhere)
+      (overlord/http:online-only ()
+        (ignore-errors
+         (with-feedback ("Updating rules..." "Rules updated.")
+           (:run
+            "git fetch --depth 1; git reset --hard origin/master"
+            :directory https-everywhere))))
+      (with-feedback ("Fetching rules..." "Fetched rules")
+        (:run `("git" "clone" "--depth=1" ,+https-everywhere-repo+))))
   (:depends-on '+https-everywhere-repo+))
 
 (overlord:defvar/deps *ruleset-files*
-    (progn
-      ;; uiop:directory-files is too slow
-      (overlord/http:online-only ()
-        (with-feedback ("Updating rules..." "Rules updated.")
-          (:run
-           "cd https-everywhere; git fetch --depth 1; git reset --hard origin/master")))
-      (directory
-       (path-join https-everywhere
-                  #p"rules/"
-                  (make-pathname :type "xml" :name :wild))))
+    ;; uiop:directory-files is too slow
+    (directory
+     (:path "https-everywhere/src/chrome/content/rules/*.xml"))
   (:depends-on '+https-everywhere-repo+)
   (:depends-on https-everywhere))
 
