@@ -40,7 +40,7 @@
           (copy-stream in out)))
       (format out "~%</rulesets>")))
   (:depends-on '*ruleset-files*)
-  (:depends-on *ruleset-files*))
+  (:depends-on-all *ruleset-files*))
 
 (overlord:deftask clean ()
   (uiop:delete-directory-tree
