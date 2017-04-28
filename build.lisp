@@ -1,6 +1,6 @@
 (in-package #:cl-https-everywhere)
 
-(overlord:define-constant +https-everywhere-repo+
+(overlord:defconfig +https-everywhere-repo+
   "https://github.com/EFForg/https-everywhere.git")
 
 (overlord:directory-target https-everywhere "https-everywhere/"
