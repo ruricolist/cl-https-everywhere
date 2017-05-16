@@ -26,6 +26,9 @@
                  :rules (mapply #'compile-rule rules)
                  :exclusions (compile-exclusions exclusions)))
 
+#+sbcl (declaim (sb-ext:freeze-type compiled-rule))
+#+sbcl (declaim (sb-ext:freeze-type ruleset))
+
 (defmethod print-object ((self ruleset) stream)
   (print-unreadable-object (self stream :type t)
     (format stream "~a" (ruleset.name self))
