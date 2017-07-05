@@ -3,17 +3,19 @@
 (overlord:defconfig +https-everywhere-repo+
   "https://github.com/EFForg/https-everywhere.git")
 
-(overlord:directory-target https-everywhere "https-everywhere/"
-  (if (uiop:directory-exists-p https-everywhere)
-      (overlord/http:online-only ()
-        (ignore-errors
-          (:message "Updating rules...")
-          (:run "git fetch --depth 1; git reset --hard origin/master"
-                :directory https-everywhere)))
-      (progn
-        (:message "Fetching rules...")
-        (:run `("git" "clone" "--depth=1" ,+https-everywhere-repo+))))
-  (:depends-on '+https-everywhere-repo+))
+(overlord:file-target https-everywhere "https-everywhere/Makefile" ()
+  (let* ((dir #p"https-everywhere/")
+         (opts `(:directory ,dir)))
+    (if (uiop:directory-exists-p dir)
+        ;; Updating doesn't matter that much.
+        (overlord/http:online-only ()
+          (ignore-errors
+           (:message "Updating rules...")
+           (:cmd opts "git fetch --depth 1")
+           (:cmd opts "git reset --hard origin/master")))
+        (progn
+          (:message "Fetching rules...")
+          (:cmd opts "git clone --depth=1" +https-everywhere-repo+)))))
 
 (overlord:defvar/deps *ruleset-files*
     ;; uiop:directory-files is too slow
