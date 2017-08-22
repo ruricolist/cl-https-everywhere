@@ -3,7 +3,7 @@
 (overlord:defconfig +https-everywhere-repo+
   "https://github.com/EFForg/https-everywhere.git")
 
-(overlord:file-target https-everywhere "https-everywhere/Makefile" ()
+(overlord:file-target https-everywhere "https-everywhere/requirements.txt" ()
   (if (uiop:directory-exists-p #p".git/")
       ;; Updating doesn't matter that much.
       (overlord/http:online-only ()
