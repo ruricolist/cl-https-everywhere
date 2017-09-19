@@ -5,8 +5,8 @@
 
 (overlord:file-target https-everywhere "https-everywhere/requirements.txt" ()
   (if (uiop:directory-exists-p #p".git/")
-      ;; Updating doesn't matter that much.
       (overlord/http:online-only ()
+        ;; Updating doesn't matter that much.
         (ignore-errors
          (:message "Updating rules...")
          (:cmd "git fetch --depth 1")
