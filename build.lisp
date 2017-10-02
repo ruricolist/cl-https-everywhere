@@ -13,7 +13,9 @@
          (:cmd "git reset --hard origin/master")))
       (progn
         (:message "Fetching rules...")
-        (:cmd "git clone --depth=1 ." +https-everywhere-repo+)))
+        (:cmd "git clone --depth=1 --"
+              +https-everywhere-repo+
+              ".")))
   (when (uiop:directory-exists-p ".git/")
     (:stamp
      (trim-whitespace
