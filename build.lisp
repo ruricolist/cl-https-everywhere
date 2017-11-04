@@ -3,7 +3,10 @@
 (overlord:defconfig +https-everywhere-repo+
   "https://github.com/EFForg/https-everywhere.git")
 
-(overlord:file-target https-everywhere "https-everywhere/requirements.txt" ()
+(overlord:file-target https-everywhere-version
+    "https-everywhere/git-version.txt"
+    (in)
+  (:always t)
   (if (uiop:directory-exists-p #p".git/")
       (overlord/http:online-only ()
         ;; Updating doesn't matter that much.
@@ -16,19 +19,23 @@
         (:cmd "git clone --depth=1 --"
               +https-everywhere-repo+
               ".")))
-  (when (uiop:directory-exists-p ".git/")
-    (:stamp
-     (trim-whitespace
-      (:cmd '(:output :string) "git rev-parse HEAD")))))
+  (if (uiop:directory-exists-p ".git/")
+      (let ((version
+              (trim-whitespace
+               (:cmd '(:output :string) "git rev-parse HEAD"))))
+        (overlord:write-file-if-changed version in))
+      (uiop:delete-file-if-exists in)))
 
 (overlord:defvar/deps *ruleset-files*
     ;; uiop:directory-files is too slow
     (directory
      (:path "https-everywhere/src/chrome/content/rules/*.xml"))
   (:depends-on '+https-everywhere-repo+)
-  (:depends-on https-everywhere))
+  (:depends-on https-everywhere-version))
 
 (overlord:file-target rulesets "rulesets.xml" (temp)
+  (:depends-on '*ruleset-files*)
+  (:depends-on-all *ruleset-files*)
   (with-output-to-file (out temp :if-exists :rename-and-delete
                                  :external-format :utf-8)
     (progn
@@ -37,18 +44,17 @@
       (dolist (file *ruleset-files*)
         (with-input-from-file (in file :external-format :utf-8)
           (copy-stream in out)))
-      (format out "~%</rulesets>")))
-  (:depends-on '*ruleset-files*)
-  (:depends-on-all *ruleset-files*))
+      (format out "~%</rulesets>"))))
 
-(overlord:deftask clean ()
-  (uiop:delete-directory-tree
-   #p"https-everywhere/"
-   :validate (op (uiop:subpathp _ (asdf:system-relative-pathname :cl-https-everywhere "")))))
+(defun clean ()
+  (let ((base (asdf:system-relative-pathname :cl-https-everywhere "")))
+    (uiop:delete-directory-tree
+     (path-join base #p "https-everywhere/")
+     :validate (op (uiop:subpathp _ base)))))
 
-(overlord:deftask maintainer-clean ()
-  (uiop:delete-file-if-exists rulesets)
-  (:depends-on 'clean))
+(defun maintainer-clean ()
+  (clean)
+  (uiop:delete-file-if-exists rulesets))
 
 (defparameter *rulesets*
   (overlord:require-as :cl-https-everywhere/rulesets-file "rulesets"))
