@@ -8,7 +8,7 @@
     (in)
   (:always t)
   (if (uiop:directory-exists-p #p".git/")
-      (overlord/http:online-only ()
+      (overlord/net:online-only ()
         ;; Updating doesn't matter that much.
         (ignore-errors
          (:message "Updating rules...")

@@ -13,7 +13,7 @@
                #:quri
                #:cl-tld
                #:overlord
-               #:overlord/http)
+               #:overlord/net)
   :components ((:file "package")
                (:file "rulesets" :depends-on ("package"))
                (:file "compiler" :depends-on ("rulesets"))
