@@ -57,4 +57,4 @@
   (uiop:delete-file-if-exists rulesets))
 
 (defparameter *rulesets*
-  (overlord:require-as :cl-https-everywhere/rulesets-file "rulesets"))
+  (overlord:require-default :cl-https-everywhere/rulesets-file "rulesets"))
