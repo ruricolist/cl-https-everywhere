@@ -26,7 +26,7 @@
         (overlord:write-file-if-changed version in))
       (uiop:delete-file-if-exists in)))
 
-(overlord:defvar/deps *ruleset-files*
+(overlord:define-target-var *ruleset-files*
     ;; uiop:directory-files is too slow
     (directory
      (:path "https-everywhere/src/chrome/content/rules/*.xml"))
