@@ -35,7 +35,7 @@
 
 (overlord:file-target rulesets "rulesets.xml" (temp)
   (:depends-on '*ruleset-files*)
-  (:depends-on-all *ruleset-files*)
+  (:pdepends-on-all *ruleset-files*)
   (with-output-to-file (out temp :if-exists :rename-and-delete
                                  :external-format :utf-8)
     (progn
