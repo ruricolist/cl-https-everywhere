@@ -26,35 +26,22 @@
         (overlord:write-file-if-changed version in))
       (uiop:delete-file-if-exists in)))
 
-(overlord:define-target-var *ruleset-files*
-    ;; uiop:directory-files is too slow
-    (directory
-     (:path "https-everywhere/src/chrome/content/rules/*.xml"))
-  (:depends-on '+https-everywhere-repo+)
-  (:depends-on https-everywhere-version))
-
 (overlord:file-target rulesets "rulesets.xml" (temp)
-  (:depends-on '*ruleset-files*)
-  (:pdepends-on-all *ruleset-files*)
-  (with-output-to-file (out temp :if-exists :rename-and-delete
-                                 :external-format :utf-8)
-    (progn
-      (:message "Concatenating rulesets.xml...")
-      (format out "<rulesets>~%")
-      (dolist (file *ruleset-files*)
-        (with-input-from-file (in file :external-format :utf-8)
-          (copy-stream in out)))
-      (format out "~%</rulesets>"))))
-
-(defun clean ()
-  (let ((base (asdf:system-relative-pathname :cl-https-everywhere "")))
-    (uiop:delete-directory-tree
-     (path-join base #p "https-everywhere/")
-     :validate (op (uiop:subpathp _ base)))))
-
-(defun maintainer-clean ()
-  (clean)
-  (uiop:delete-file-if-exists rulesets))
+  (:depends-on '+https-everywhere-repo+)
+  (:depends-on https-everywhere-version)
+  (let ((files
+          ;; uiop:directory-files is too slow
+          (directory
+           (:path "https-everywhere/src/chrome/content/rules/*.xml"))))
+    (with-output-to-file (out temp :if-exists :rename-and-delete
+                                   :external-format :utf-8)
+      (progn
+        (:message "Concatenating rulesets.xml...")
+        (format out "<rulesets>~%")
+        (do-each (file files)
+          (with-input-from-file (in file :external-format :utf-8)
+            (copy-stream in out)))
+        (format out "~%</rulesets>")))))
 
 (defparameter *rulesets*
   (overlord:require-default :cl-https-everywhere/rulesets-file "rulesets"))
