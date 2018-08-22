@@ -1,19 +1,19 @@
 ;;;; cl-https-everywhere.asd
-(in-package #:asdf-user)
 
-(asdf:defsystem #:cl-https-everywhere
+(defsystem "cl-https-everywhere"
   :description "Use HTTPS Everywhere rules from Lisp."
   :author "Paul M. Rodriguez <pmr@ruricolist.com>"
   :license "MIT"
-  :depends-on (#:alexandria
-               #:serapeum
-               #:cl-ppcre
-               #:fxml
-               #:uiop
-               #:quri
-               #:cl-tld
-               #:overlord
-               #:overlord/net)
+  :depends-on ("alexandria"
+               "serapeum"
+               "cl-ppcre"
+               "fxml"
+               "uiop"
+               "quri"
+               "cl-tld"
+               "overlord"
+               "overlord/net"
+               "vernacular")
   :components ((:file "package")
                (:file "rulesets" :depends-on ("package"))
                (:file "compiler" :depends-on ("rulesets"))

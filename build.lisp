@@ -29,10 +29,15 @@
 (overlord:file-target rulesets "rulesets.xml" (temp)
   (:depends-on '+https-everywhere-repo+)
   (:depends-on https-everywhere-version)
-  (let ((files
-          ;; uiop:directory-files is too slow
-          (directory
-           (:path "https-everywhere/src/chrome/content/rules/*.xml"))))
+  (let* ((pat
+           (make-pathname
+            :directory '(:relative "https-everywhere" "src" "chrome" "content" "rules")
+            :name :wild
+            :type "xml"))
+         ;; uiop:directory-files is too slow
+         (files (directory pat)))
+    (unless files
+      (error "No rules in ~a" pat))
     (with-output-to-file (out temp :if-exists :rename-and-delete
                                    :external-format :utf-8)
       (progn
@@ -44,4 +49,4 @@
         (format out "~%</rulesets>")))))
 
 (defparameter *rulesets*
-  (overlord:require-default :cl-https-everywhere/rulesets-file "rulesets"))
+  (vernacular:require-default :cl-https-everywhere/rulesets-file "rulesets"))

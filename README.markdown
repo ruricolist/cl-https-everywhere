@@ -31,5 +31,5 @@ there may be [a simpler API][API]. If such an API does come along, it
 would make keeping the rulesets up-to-date much easier.
 
 [HTTPS Everywhere]: https://www.eff.org/HTTPS-everywhere
-[Overlord]: https://github.com/TBRSS/overlord
+[Overlord]: https://github.com/ruricolist/overlord
 [API]: https://github.com/EFForg/https-everywhere/issues/6937
