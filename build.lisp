@@ -49,4 +49,4 @@
         (format out "~%</rulesets>")))))
 
 (defparameter *rulesets*
-  (vernacular:require-default :cl-https-everywhere/rulesets-file "rulesets"))
+  (vernacular:require-default :cl-https-everywhere/rulesets-file "rulesets.xml"))
