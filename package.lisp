@@ -1,7 +1,8 @@
 ;;;; package.lisp
 
 (defpackage #:cl-https-everywhere
-  (:use #:cl #:alexandria #:serapeum)
+  (:use #:cl #:alexandria #:serapeum #:overlord
+    #:overlord/net)
   (:nicknames #:https-everywhere)
   (:shadow :if)
   (:export
