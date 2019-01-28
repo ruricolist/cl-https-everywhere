@@ -5,7 +5,7 @@
 
 (file-target https-everywhere-version
     "https-everywhere/git-version.txt"
-    (in)
+    (:dest dest)
   (redo-always)
   (if (uiop:directory-exists-p #p".git/")
       (overlord/net:online-only ()
@@ -23,10 +23,10 @@
       (let ((version
               (trim-whitespace
                (cmd '(:output :string) "git rev-parse HEAD"))))
-        (write-file-if-changed version in))
-      (uiop:delete-file-if-exists in)))
+        (write-file-if-changed version dest))
+      (uiop:delete-file-if-exists dest)))
 
-(file-target rulesets "rulesets.xml" (temp)
+(file-target rulesets "rulesets.xml" (:out temp)
   (depends-on '+https-everywhere-repo+)
   (depends-on https-everywhere-version)
   (let* ((pat
@@ -38,8 +38,7 @@
          (files (directory pat)))
     (unless files
       (error "No rules in ~a" pat))
-    (with-output-to-file (out temp :if-exists :rename-and-delete
-                                   :external-format :utf-8)
+    (with-output-to-file (out temp :external-format :utf-8)
       (progn
         (message "Concatenating rulesets.xml...")
         (format out "<rulesets>~%")
