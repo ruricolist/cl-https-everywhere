@@ -4,8 +4,8 @@
     "https://github.com/EFForg/https-everywhere.git")
 
 (file-target https-everywhere-version
-    "https-everywhere/git-version.txt"
-    (:dest dest)
+    (:path "https-everywhere/git-version.txt"
+     :dest dest)
   (redo-always)
   (if (uiop:directory-exists-p #p".git/")
       (overlord/net:online-only ()
@@ -22,11 +22,11 @@
   (if (uiop:directory-exists-p ".git/")
       (let ((version
               (trim-whitespace
-               (cmd '(:output :string) "git rev-parse HEAD"))))
+               ($cmd "git rev-parse HEAD"))))
         (write-file-if-changed version dest))
       (uiop:delete-file-if-exists dest)))
 
-(file-target rulesets "rulesets.xml" (:out temp)
+(file-target rulesets (:path "rulesets.xml" :out temp)
   (depends-on '+https-everywhere-repo+)
   (depends-on https-everywhere-version)
   (let* ((pat
