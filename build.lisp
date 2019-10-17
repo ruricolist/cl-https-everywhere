@@ -29,23 +29,18 @@
 (file-target rulesets (:path "rulesets.xml" :out temp)
   (depends-on '+https-everywhere-repo+)
   (depends-on https-everywhere-version)
-  (let* ((pat
-           (make-pathname
-            :directory '(:relative "https-everywhere" "src" "chrome" "content" "rules")
-            :name :wild
-            :type "xml"))
+  (let* ((pat (uiop:parse-unix-namestring "https-everywhere/src/chrome/content/rules/*.xml"))
          ;; uiop:directory-files is too slow
          (files (directory pat)))
     (unless files
       (error "No rules in ~a" pat))
     (with-output-to-file (out temp :external-format :utf-8)
-      (progn
-        (message "Concatenating rulesets.xml...")
-        (format out "<rulesets>~%")
-        (do-each (file files)
-          (with-input-from-file (in file :external-format :utf-8)
-            (copy-stream in out)))
-        (format out "~%</rulesets>")))))
+      (message "Concatenating rulesets.xml...")
+      (format out "<rulesets>~%")
+      (do-each (file files)
+        (with-input-from-file (in file :external-format :utf-8)
+          (copy-stream in out)))
+      (format out "~%</rulesets>"))))
 
 (defparameter *rulesets*
   (vernacular:require-default :cl-https-everywhere/rulesets-file "rulesets.xml"))
